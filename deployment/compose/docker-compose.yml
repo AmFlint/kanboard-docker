@@ -1,0 +1,18 @@
+version: '3'
+services:
+  web:
+    image: masselot-lydia-nginx:latest
+    ports:
+      - 80:80
+    networks:
+      - web
+  
+  php-fpm:
+    image: masselot-lydia-php:latest
+    networks:
+      - web
+    
+    
+
+networks:
+  web:
