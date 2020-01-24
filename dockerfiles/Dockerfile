@@ -50,7 +50,6 @@ RUN php -r "unlink('composer-setup.php');"
 
 # PHP-FPM Configuration
 RUN mkdir -p /run/php
-#COPY ./php /etc/php/${PHP_VERSION}/fpm/pool.d/
 
 # Kanboard source code
 RUN git clone https://github.com/kanboard/kanboard.git /usr/share/kanboard
