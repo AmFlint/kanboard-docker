@@ -52,6 +52,9 @@ RUN git clone https://github.com/kanboard/kanboard.git /usr/share/kanboard
 RUN composer install
 RUN chown -R www-data:www-data /usr/share/kanboard
 
-# TODO: DB Configuration
+# entrypoint
+COPY scripts/entrypoint-php.sh /usr/share/entrypoint.sh
 
-CMD [ "/usr/sbin/php-fpm7.2", "-F" ]
+ENV PHP_VERSION=${PHP_VERSION}
+
+CMD [ "/bin/bash", "/usr/share/entrypoint.sh" ]

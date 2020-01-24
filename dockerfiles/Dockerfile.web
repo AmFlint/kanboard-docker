@@ -17,4 +17,10 @@ COPY ./configuration/nginx.conf /etc/nginx/sites-enabled/default
 RUN git clone https://github.com/kanboard/kanboard.git /usr/share/kanboard
 RUN chown -R www-data:www-data /usr/share/kanboard
 
-CMD [ "nginx" , "-g", "daemon off;" ]
+# Copy entrypoint
+COPY scripts/entrypoint-web.sh /usr/share/entrypoint-web.sh
+
+ENV FASTCGI_HOST=php-fpm
+ENV FASTCGI_PORT=9100
+
+CMD [ "/bin/bash", "/usr/share/entrypoint-web.sh" ]

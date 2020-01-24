@@ -1,18 +1,62 @@
 version: '3'
 services:
+  # -- Split services -- #
+  # 1 Container per service
   web:
     image: masselot-lydia-nginx:latest
     ports:
       - 80:80
+    environment:
+      FASTCGI_HOST: php
+      FASTCGI_PORT: 9100
+    volumes:
+      - ./config-services.php:/usr/share/kanboard/config.php
     networks:
       - web
   
-  php-fpm:
+  php:
     image: masselot-lydia-php:latest
+    volumes:
+      - ./config-services.php:/usr/share/kanboard/config.php
     networks:
       - web
-    
-    
+      - services-database
+
+  database-services:
+    image: mysql:5.6
+    environment:
+      MYSQL_USER: masselot
+      MYSQL_PASSWORD: masselot-lydia
+      MYSQL_ROOT_PASSWORD: mysecretrootpassword
+      MYSQL_DATABASE: kanboard
+    volumes:
+      - ./dockerdata/services:/var/lib/mysql
+    networks:
+      - services-database
+
+  # -- Standalone Application -- #
+  standalone:
+    image: masselot-lydia-standalone:latest
+    volumes:
+      - ./config-standalone.php:/usr/share/kanboard/config.php
+    ports:
+      - 81:80
+    networks:
+      - standalone-database
+
+  database-standalone:
+    image: postgres:10
+    environment:
+      POSTGRES_DB: kanboard
+      POSTGRES_USER: masselot-kanboard
+      POSTGRES_PASSWORD: masselot-lydia
+      PGDATA: /data/postgres
+    volumes:
+      - ./dockerdata/standalone:/data/postgres
+    networks:
+      - standalone-database
 
 networks:
   web:
+  services-database:
+  standalone-database:

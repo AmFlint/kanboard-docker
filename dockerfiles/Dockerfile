@@ -57,14 +57,13 @@ RUN git clone https://github.com/kanboard/kanboard.git /usr/share/kanboard
 RUN composer install
 RUN chown -R www-data:www-data /usr/share/kanboard
 
-# Start PHP-FPM in the background
-RUN php-fpm${PHP_VERSION}
-
 RUN apt install -y supervisor
 # Configuration for supervisord
 RUN mkdir -p /var/log/supervisor /etc/supervisor/conf.d
 COPY configuration/supervisor.conf /etc/supervisor/supervisor.conf
 
-# TODO: DB CONFIGURATION, PHP VERSION SUPERVISORD
+# Use right php version for php-fpm and nginx
+RUN sed -i "s/php-fpm/php-fpm${PHP_VERSION}/g" /etc/supervisor/supervisor.conf
+RUN sed -i "s/php-fpm.sock/php${PHP_VERSION}-fpm.sock/g" /etc/nginx/sites-enabled/standalone.conf
 
 CMD [ "supervisord", "-c", "/etc/supervisor/supervisor.conf" ]
